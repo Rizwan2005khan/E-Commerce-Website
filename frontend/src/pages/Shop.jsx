@@ -90,7 +90,7 @@ const Shop = () => {
             <div className="p-5 w-[15rem]">
               {categories?.map((c) => (
                 <div key={c._id} className="mb-2">
-                  <div className="flex ietms-center mr-4">
+                  <div className="flex items-center mr-4">
                     <input
                       type="checkbox"
                       id="red-checkbox"

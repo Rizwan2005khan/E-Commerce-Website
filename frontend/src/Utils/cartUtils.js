@@ -1,29 +1,38 @@
-
 export const addDecimals = (num) => {
-  return (Math.round(num * 100) / 100).toFixed(2);
+  return Number((Math.round(num * 100) / 100).toFixed(2));
 };
 
 export const updateCart = (state) => {
-  // Calculate the items price
-  state.itemsPrice = addDecimals(
-    state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+  // Convert all calculations to numbers (not strings)
+  const itemsPrice = state.cartItems.reduce(
+    (acc, item) => acc + item.price * item.qty,
+    0
   );
 
-  // Calculate the shipping price
-  state.shippingPrice = addDecimals(state.itemsPrice > 100 ? 0 : 10);
+  state.itemsPrice = addDecimals(itemsPrice);
 
-  // Calculate the tax price
-  state.taxPrice = addDecimals(Number((0.15 * state.itemsPrice).toFixed(2)));
+  // Shipping: free after 100
+  state.shippingPrice = state.itemsPrice > 100 ? 0 : 10;
 
-  // Calculate the total price
-  state.totalPrice = (
-    Number(state.itemsPrice) +
-    Number(state.shippingPrice) +
-    Number(state.taxPrice)
-  ).toFixed(2);
+  // Tax: 15%
+  state.taxPrice = addDecimals(0.15 * state.itemsPrice);
 
-  // Save the cart to localStorage
-  localStorage.setItem("cart", JSON.stringify(state));
+  // Total price
+  state.totalPrice =
+    state.itemsPrice + state.shippingPrice + state.taxPrice;
+
+  // Store ONLY the serializable state fields
+  const serializedCart = {
+    cartItems: state.cartItems,
+    itemsPrice: state.itemsPrice,
+    shippingPrice: state.shippingPrice,
+    taxPrice: state.taxPrice,
+    totalPrice: state.totalPrice,
+    shippingAddress: state.shippingAddress,
+    paymentMethod: state.paymentMethod,
+  };
+
+  localStorage.setItem("cart", JSON.stringify(serializedCart));
 
   return state;
 };

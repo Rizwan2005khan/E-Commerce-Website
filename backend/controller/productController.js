@@ -32,7 +32,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
-    const { name, description, price, category, quantity, brand } = req.fields;
+    const { name, description, price, category, quantity, brand,  countInStock } = req.fields;
 
     // Validation
     switch (true) {
@@ -51,14 +51,15 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     }
 
     const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { ...req.fields },
-      { new: true }
-    );
+      req.params.id)
+    if(!product){
+      res.status(404).json({success: false, message: "Product not found"})
+    }
 
-    await product.save();
+    Object.assign(product, {name, description, price, category, quantity, brand, countInStock});
+    const updated = await product.save();
 
-    res.json(product);
+    res.json(updated);
   } catch (error) {
     console.error(error);
     res.status(400).json(error.message);

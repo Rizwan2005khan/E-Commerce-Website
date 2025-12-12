@@ -9,6 +9,7 @@ const ProductCard = ({ p }) => {
   const dispatch = useDispatch();
 
   const addToCartHandler = (product, qty) => {
+     console.log("1. addToCartHandler called with", product, qty);
     dispatch(addToCart({ ...product, qty }));
     toast.success("Item added successfully", {
       position: toast.POSITION.TOP_RIGHT,
